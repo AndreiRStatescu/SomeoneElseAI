@@ -9,24 +9,18 @@ load_dotenv(".env.local")
 class OpenAIService:
     def __init__(self, api_key: str = None):
         self._client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-        self._default_model = LLMModels.GPT_5_NANO
+        self._default_model = LLMModels.GPT_5_1
 
     def _call_gpt5_model(self, message: str, model: str) -> str:
-        completion = self._client.chat.completions.create(
+        reasoning_effort = "none" if model == "gpt-5.1" else "minimal"
+        response = self._client.responses.create(
             model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant that answers questions concisely and accurately.",
-                },
-                {
-                    "role": "user",
-                    "content": message,
-                },
-            ],
-            max_completion_tokens=1000,
+            input=f"You are a helpful assistant that answers questions concisely and accurately.\n\nUser: {message}",
+            reasoning={"effort": reasoning_effort},
+            text={"verbosity": "medium"},
+            max_output_tokens=1000,
         )
-        return completion.choices[0].message.content or "No response generated"
+        return response.output_text or "No response generated"
 
     def _call_gpt4_model(self, message: str, model: str) -> str:
         completion = self._client.chat.completions.create(
@@ -63,11 +57,35 @@ class OpenAIService:
         try:
             if messages is not None:
                 if LLMModels.is_gpt5_model(selected_model):
-                    completion = self._client.chat.completions.create(
-                        model=selected_model,
-                        messages=messages,
-                        max_completion_tokens=2000,
+                    input_text = ""
+                    for msg in messages:
+                        role = msg.get("role", "")
+                        content = msg.get("content", "")
+                        if role == "system":
+                            input_text += f"{content}\n\n"
+                        elif role == "user":
+                            input_text += f"User: {content}\n"
+                        elif role == "assistant":
+                            input_text += f"Assistant: {content}\n"
+
+                    reasoning_effort = (
+                        "none"
+                        if selected_model == LLMModels.GPT_5_1.value
+                        else "minimal"
                     )
+                    response = self._client.responses.create(
+                        model=selected_model,
+                        input=input_text.strip(),
+                        reasoning={"effort": reasoning_effort},
+                        text={"verbosity": "medium"},
+                        max_output_tokens=2000,
+                    )
+
+                    response_text = response.output_text
+                    if not response_text:
+                        return {"error": "Empty response from API", "status": 500}
+
+                    return {"response": response_text, "status": 200}
                 else:
                     completion = self._client.chat.completions.create(
                         model=selected_model,
@@ -94,13 +112,15 @@ class OpenAIService:
                         "error": f"Empty response from API (finish_reason: {choice.finish_reason})",
                         "status": 500,
                     }
+
+                return {"response": response_text, "status": 200}
             else:
                 if LLMModels.is_gpt5_model(selected_model):
                     response_text = self._call_gpt5_model(message, selected_model)
                 else:
                     response_text = self._call_gpt4_model(message, selected_model)
 
-            return {"response": response_text, "status": 200}
+                return {"response": response_text, "status": 200}
         except Exception as error:
             print(f"OpenAI API Error: {error}")
             return {

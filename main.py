@@ -1,24 +1,19 @@
 from src.services.character_service import CharacterService
+from src.services.test_case_reader import TestCaseReader
 from src.llm_models_enum import LLMModels
 
 
 def main():
-    service = CharacterService(
-        character_file="data/characters/cipher.yaml", enable_user_memory=True
-    )
+    config = TestCaseReader.load_from_yaml("data/test_scenarios/test_case_1.yaml")
 
-    service.set_user_info(name="Alex", interests="cybersecurity and privacy")
+    service = CharacterService(config)
 
     print("=== Conversation Starters ===")
     for i, starter in enumerate(service.get_conversation_starters(), 1):
         print(f"{i}. {starter}")
-    print("\n=== Chat with Cipher ===\n")
+    print("\n=== Chat Start ===\n")
 
-    messages = [
-        "What do you do?",
-        "Tell me about Neo-Tokyo",
-        "What's the biggest threat to privacy?",
-    ]
+    messages = config.messages
 
     for message in messages:
         print(f"You: {message}")

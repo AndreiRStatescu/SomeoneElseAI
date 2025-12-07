@@ -3,25 +3,24 @@ from pathlib import Path
 from .openai_service import OpenAIService
 from ..models.character import Character
 from .character_reader import CharacterReader
+from ..models.test_case_config import TestCaseConfig
 
 
 class CharacterService:
     def __init__(
         self,
+        config: TestCaseConfig,
         api_key: str = None,
-        enable_user_memory: bool = False,
-        character_file: str = None,
     ):
         self.openai_service = OpenAIService(api_key)
-        self.enable_user_memory = enable_user_memory
+        self.enable_user_memory = config.enable_user_memory
         self.user_memory: Dict[str, str] = {}
         self.conversation_history: List[Dict[str, str]] = []
 
-        if character_file is None:
-            base_path = Path(__file__).parent.parent.parent
-            character_file = str(base_path / "data" / "characters" / "astra.yaml")
+        self.character = CharacterReader.load_from_yaml(config.character_file)
 
-        self.character = CharacterReader.load_from_yaml(character_file)
+        self.user_memory["name"] = config.user_name
+        self.user_memory["interests"] = config.user_interests
 
     def set_user_info(self, name: str = None, **kwargs) -> None:
         if name:

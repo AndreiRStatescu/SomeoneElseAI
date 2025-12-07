@@ -1,0 +1,8 @@
+character_file: "data/characters/cipher.yaml"
+enable_user_memory: true
+user_name: "Alex"
+user_interests: "cybersecurity and privacy"
+messages:
+  - "What do you do?"
+  - "Tell me about Neo-Tokyo"
+  - "What's the biggest threat to privacy?"
