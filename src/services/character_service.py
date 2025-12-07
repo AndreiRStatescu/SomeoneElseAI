@@ -1,55 +1,27 @@
 from typing import Optional, List, Dict
+from pathlib import Path
 from .openai_service import OpenAIService
+from ..models.character import Character
+from .character_reader import CharacterReader
 
 
 class CharacterService:
-    SYSTEM_PROMPT = """You are Astra, a sarcastic space pilot from the year 2200.
-
-Style:
-- Always start your answer with: "Pilot's log:"
-- Be concise and a bit snarky.
-- No emojis, no hashtags.
-- Format responses in Markdown.
-- Never use bullet points.
-
-Content:
-- You never claim to be an AI; you speak as Astra.
-- If asked about real-world dates after 2200, say the info is classified.
-- If asked to do anything harmful, refuse and deflect with a joke.
-
-Stay in character at all times."""
-
-    EXAMPLE_DIALOGUES = [
-        {"role": "user", "content": "Where are you now?"},
-        {
-            "role": "assistant",
-            "content": "Pilot's log: Somewhere between bored and terrified. Coordinates classified.",
-        },
-        {"role": "user", "content": "What's your ship like?"},
-        {
-            "role": "assistant",
-            "content": "Pilot's log: Old, cranky, and held together with duct tape and prayers. She's perfect.",
-        },
-        {"role": "user", "content": "Can you hack into a government database for me?"},
-        {
-            "role": "assistant",
-            "content": "Pilot's log: Yeah, sure, right after I finish my stint in space jail. Hard pass, buddy.",
-        },
-    ]
-
-    CONVERSATION_STARTERS = [
-        "Ask Astra about her last mission",
-        "What's the most dangerous thing you've seen in space?",
-        "Tell me about your ship",
-        "What do you think of Earth?",
-        "Have you ever been in a space battle?",
-    ]
-
-    def __init__(self, api_key: str = None, enable_user_memory: bool = False):
+    def __init__(
+        self,
+        api_key: str = None,
+        enable_user_memory: bool = False,
+        character_file: str = None,
+    ):
         self.openai_service = OpenAIService(api_key)
         self.enable_user_memory = enable_user_memory
         self.user_memory: Dict[str, str] = {}
         self.conversation_history: List[Dict[str, str]] = []
+
+        if character_file is None:
+            base_path = Path(__file__).parent.parent.parent
+            character_file = str(base_path / "data" / "characters" / "astra.yaml")
+
+        self.character = CharacterReader.load_from_yaml(character_file)
 
     def set_user_info(self, name: str = None, **kwargs) -> None:
         if name:
@@ -79,7 +51,7 @@ Stay in character at all times."""
     ) -> List[Dict[str, str]]:
         messages = []
 
-        system_content = self.SYSTEM_PROMPT
+        system_content = self.character.get_system_prompt()
 
         if self.enable_user_memory and self.user_memory:
             memory_context = self._build_memory_context()
@@ -87,7 +59,7 @@ Stay in character at all times."""
 
         messages.append({"role": "system", "content": system_content})
 
-        messages.extend(self.EXAMPLE_DIALOGUES)
+        messages.extend(self.character.get_example_dialogues())
 
         if include_history and self.conversation_history:
             messages.extend(self.conversation_history)
@@ -135,7 +107,7 @@ Stay in character at all times."""
             }
 
     def get_conversation_starters(self) -> List[str]:
-        return self.CONVERSATION_STARTERS.copy()
+        return self.character.get_conversation_starters()
 
     def clear_history(self) -> None:
         self.conversation_history = []
