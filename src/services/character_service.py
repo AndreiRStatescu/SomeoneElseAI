@@ -1,7 +1,10 @@
-from typing import List, Dict
+import logging
+from typing import List, Dict, Callable, Optional
 from .openai_service import OpenAIService
 from .character_reader import CharacterReader
 from ..models.test_case_config import TestCaseConfig
+
+logger = logging.getLogger(__name__)
 
 
 class CharacterService:
@@ -71,16 +74,22 @@ class CharacterService:
         model: str = None,
         include_history: bool = False,
         save_to_history: bool = False,
+        stream: bool = False,
+        stream_handler: Optional[Callable[[str], None]] = None,
     ) -> dict:
         if not message or not isinstance(message, str):
             return {"error": "Message is required", "status": 400}
 
         try:
             messages = self._build_messages(message, include_history)
-            print(f"DEBUG: Built messages: {messages}")
+            logger.debug(f"Built messages: {messages}")
 
             response = self.openai_service.generate_response(
-                message=None, model=model, messages=messages
+                message=None,
+                model=model,
+                messages=messages,
+                stream=stream,
+                stream_handler=stream_handler,
             )
 
             if response.get("status") != 200:
@@ -97,7 +106,7 @@ class CharacterService:
             return {"response": response_text, "status": 200}
 
         except Exception as error:
-            print(f"Character Service Error: {error}")
+            logger.error(f"Character Service Error: {error}")
             return {
                 "error": "Failed to generate response",
                 "details": str(error),

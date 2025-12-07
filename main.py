@@ -7,19 +7,32 @@ def main():
     config = TestCaseReader.load_from_yaml("data/test_scenarios/test_case_astra.yaml")
 
     service = CharacterService(config)
+    model = LLMModels.GPT_5_NANO.value
+    should_stream = LLMModels.is_gpt5_model(model)
+
+    def print_stream_chunk(chunk: str) -> None:
+        print(chunk, end="", flush=True)
     
     for message in config.messages:
         print(f"You: {message}")
+        if should_stream:
+            print("Astra: ", end="", flush=True)
+
         result = service.generate_response(
             message=message,
-            model=LLMModels.GPT_5_NANO.value,
+            model=model,
             save_to_history=True,
+            stream=should_stream,
+            stream_handler=print_stream_chunk if should_stream else None,
         )
 
+        if should_stream:
+            print()
+
         print(f"Status: {result.get('status')}")
-        if result.get("response"):
+        if result.get("response") and not should_stream:
             print(f"Astra: {result.get('response')}\n")
-        else:
+        elif not result.get("response"):
             print(f"Error: {result.get('error')}")
             if result.get("details"):
                 print(f"Details: {result.get('details')}")
