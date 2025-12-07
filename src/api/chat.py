@@ -3,11 +3,18 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List, Dict
 import asyncio
+from pathlib import Path
 from src.services.character_service import CharacterService
 from src.models.test_case_config import TestCaseConfig
 from src.models.llm_models_enum import LLMModels
 
 router = APIRouter()
+
+
+def get_character_path(character_file: str) -> str:
+    if "/" in character_file or "\\" in character_file:
+        return character_file
+    return str(Path("data/characters") / character_file)
 
 
 class ChatRequest(BaseModel):
@@ -30,7 +37,7 @@ class ChatResponse(BaseModel):
 async def chat(request: ChatRequest):
     try:
         config = TestCaseConfig()
-        config.character_file = request.character_file
+        config.character_file = get_character_path(request.character_file)
         config.enable_user_memory = request.enable_user_memory
         config.user_name = request.user_name
         config.user_interests = request.user_interests
@@ -64,7 +71,7 @@ async def chat(request: ChatRequest):
 async def stream_chat_response(request: ChatRequest):
     try:
         config = TestCaseConfig()
-        config.character_file = request.character_file
+        config.character_file = get_character_path(request.character_file)
         config.enable_user_memory = request.enable_user_memory
         config.user_name = request.user_name
         config.user_interests = request.user_interests
