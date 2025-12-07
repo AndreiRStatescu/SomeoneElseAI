@@ -4,7 +4,7 @@ from src.llm_models_enum import LLMModels
 
 
 def main():
-    config = TestCaseReader.load_from_yaml("data/test_scenarios/test_case_1.yaml")
+    config = TestCaseReader.load_from_yaml("data/test_scenarios/test_case_elara.yaml")
 
     service = CharacterService(config)
 
@@ -25,7 +25,7 @@ def main():
 
         print(f"Status: {result.get('status')}")
         if result.get("response"):
-            print(f"Cipher: {result.get('response')}\n")
+            print(f"Elara: {result.get('response')}\n")
         else:
             print(f"Error: {result.get('error')}")
             if result.get("details"):

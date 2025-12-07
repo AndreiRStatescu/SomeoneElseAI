@@ -1,0 +1,8 @@
+character_file: "data/characters/elara.yaml"
+enable_user_memory: true
+user_name: "Sam"
+user_interests: "technology and modern life"
+messages:
+  - "What do you think of cars?"
+  - "Do you use smartphones?"
+  - "What's the strangest human custom you've encountered?"
