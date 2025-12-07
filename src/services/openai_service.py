@@ -3,7 +3,7 @@ import os
 from typing import Callable, List, Dict
 from openai import OpenAI
 from dotenv import load_dotenv
-from ..llm_models_enum import LLMModels
+from ..models.llm_models_enum import LLMModels
 
 load_dotenv(".env.local")
 logger = logging.getLogger(__name__)

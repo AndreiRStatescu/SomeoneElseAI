@@ -1,6 +1,6 @@
 from src.services.character_service import CharacterService
 from src.services.test_case_reader import TestCaseReader
-from src.llm_models_enum import LLMModels
+from models.llm_models_enum import LLMModels
 
 
 def main():
