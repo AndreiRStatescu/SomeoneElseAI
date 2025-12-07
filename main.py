@@ -3,19 +3,21 @@ from src.llm_models_enum import LLMModels
 
 
 def main():
-    service = CharacterService(enable_user_memory=True)
+    service = CharacterService(
+        character_file="data/characters/cipher.yaml", enable_user_memory=True
+    )
 
-    service.set_user_info(name="Alex", interests="space exploration")
+    service.set_user_info(name="Alex", interests="cybersecurity and privacy")
 
     print("=== Conversation Starters ===")
     for i, starter in enumerate(service.get_conversation_starters(), 1):
         print(f"{i}. {starter}")
-    print("\n=== Chat with Astra ===\n")
+    print("\n=== Chat with Cipher ===\n")
 
     messages = [
-        "What is the capital of France?",
-        "Tell me about your last mission",
-        "What happens in the year 2250?",
+        "What do you do?",
+        "Tell me about Neo-Tokyo",
+        "What's the biggest threat to privacy?",
     ]
 
     for message in messages:
@@ -28,7 +30,7 @@ def main():
 
         print(f"Status: {result.get('status')}")
         if result.get("response"):
-            print(f"Astra: {result.get('response')}\n")
+            print(f"Cipher: {result.get('response')}\n")
         else:
             print(f"Error: {result.get('error')}")
             if result.get("details"):
