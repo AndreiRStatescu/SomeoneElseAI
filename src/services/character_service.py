@@ -1,7 +1,5 @@
-from typing import Optional, List, Dict
-from pathlib import Path
+from typing import List, Dict
 from .openai_service import OpenAIService
-from ..models.character import Character
 from .character_reader import CharacterReader
 from ..models.test_case_config import TestCaseConfig
 
@@ -79,6 +77,7 @@ class CharacterService:
 
         try:
             messages = self._build_messages(message, include_history)
+            print(f"DEBUG: Built messages: {messages}")
 
             response = self.openai_service.generate_response(
                 message=None, model=model, messages=messages
@@ -104,9 +103,6 @@ class CharacterService:
                 "details": str(error),
                 "status": 500,
             }
-
-    def get_conversation_starters(self) -> List[str]:
-        return self.character.get_conversation_starters()
 
     def clear_history(self) -> None:
         self.conversation_history = []
