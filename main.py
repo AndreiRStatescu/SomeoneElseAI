@@ -1,11 +1,13 @@
 from src.services.openai_service import OpenAIService
+from src.llm_models_enum import LLMModels
 
 
 def main():
     service = OpenAIService()
 
     result = service.generate_response(
-        message="What is the capital of France?", mode="ask", model="gpt-5-nano"
+        message="What is the capital of France?",
+        model=LLMModels.GPT_5_NANO.value,
     )
 
     print(f"Status: {result.get('status')}")
