@@ -6,7 +6,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 try:
-    from src.api.api import app
+    from api.api import app
     from mangum import Mangum
 
     handler = Mangum(app, lifespan="off")

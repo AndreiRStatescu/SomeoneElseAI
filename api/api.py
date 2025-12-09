@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from src.api.chat import router as chat_router
-from src.api.random_parrot import router as random_parrot_router
+from api.chat import router as chat_router
+from api.random_parrot import router as random_parrot_router
 
 app = FastAPI()
 
