@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+node_modules/
+*.log
+tests/
+data/test_scenarios/
+*.md
+README.md
+LICENSE
+dev.sh
+test_chat_endpoint.py
