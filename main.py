@@ -1,9 +1,10 @@
+from src.services.fine_tune_service import FineTuneService
 from src.services.character_service import CharacterService
 from src.services.test_case_reader import TestCaseReader
-from models.llm_models_enum import LLMModels
+from src.models.llm_models_enum import LLMModels
 
 
-def main():
+def run_case():
     config = TestCaseReader.load_from_yaml("data/test_scenarios/test_case_astra.yaml")
 
     service = CharacterService(config)
@@ -37,6 +38,11 @@ def main():
             if result.get("details"):
                 print(f"Details: {result.get('details')}")
         print("-" * 50 + "\n")
+
+
+def main():
+    fine_tune_service = FineTuneService()
+    fine_tune_service.run()
 
 
 if __name__ == "__main__":

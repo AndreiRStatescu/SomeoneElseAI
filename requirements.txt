@@ -5,3 +5,7 @@ fastapi
 uvicorn
 pytest
 httpx
+transformers
+torch
+datasets
+peft
