@@ -182,3 +182,14 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 .vercel
+
+# Binary files
+*.bin
+*.dat
+*.data
+*.exe
+*.dll
+*.obj
+*.o
+*.so
+*.dylib

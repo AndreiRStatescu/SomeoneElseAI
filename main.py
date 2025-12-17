@@ -1,3 +1,4 @@
+from src.services.small_language_model_train_service import SmallLanguageModelTrainService
 from src.services.fine_tune_service import FineTuneService
 from src.services.character_service import CharacterService
 from src.services.test_case_reader import TestCaseReader
@@ -13,7 +14,7 @@ def run_case():
 
     def print_stream_chunk(chunk: str) -> None:
         print(chunk, end="", flush=True)
-    
+
     for message in config.messages:
         print(f"You: {message}")
         if should_stream:
@@ -40,9 +41,13 @@ def run_case():
         print("-" * 50 + "\n")
 
 
-def main():
+def run_fine_tune():
     fine_tune_service = FineTuneService()
     fine_tune_service.run()
+
+
+def main():
+    SmallLanguageModelTrainService().prepare_dataset_optimised()
 
 
 if __name__ == "__main__":
