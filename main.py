@@ -47,7 +47,7 @@ def run_fine_tune():
 
 
 def main():
-    SmallLanguageModelTrainService().prepare_dataset_optimised()
+    SmallLanguageModelTrainService().prepare_dataset()
 
 
 if __name__ == "__main__":

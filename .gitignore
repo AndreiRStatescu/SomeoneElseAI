@@ -193,3 +193,27 @@ cython_debug/
 *.o
 *.so
 *.dylib
+
+# macOS
+.DS_Store
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ML/AI files
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+*.pth
+*.pt
+*.onnx
+*.pb
+*.tflite
+*.ckpt
+*.model
+*.weights
