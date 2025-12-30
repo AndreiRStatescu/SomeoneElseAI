@@ -217,3 +217,8 @@ yarn-error.log*
 *.ckpt
 *.model
 *.weights
+
+
+orra_enterprise_additional_exports
+orra_enterprise_export_pack (1)
+data/orra_enterprise_concatenated.md
